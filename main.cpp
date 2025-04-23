@@ -6,13 +6,12 @@
 #include "player.h"
 #include "laser.h"
 #include "rocks.h"
+#include <bomb.h>
 
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
 
 bool running = true;
-
-Player player;
 
 void ProcessEvent() {
     SDL_Event e;
@@ -27,15 +26,17 @@ void ProcessEvent() {
     }
 
     const Uint8* keystates = SDL_GetKeyboardState(NULL);
-    if (keystates[SDL_SCANCODE_W]) player.y -= player.speed;
-    if (keystates[SDL_SCANCODE_S]) player.y += player.speed;
-    if (keystates[SDL_SCANCODE_A]) player.x -= player.speed;
-    if (keystates[SDL_SCANCODE_D]) player.x += player.speed;
+	
+	Player* player = GetPlayer();
+    if (keystates[SDL_SCANCODE_W]) player->y -= player->speed;
+    if (keystates[SDL_SCANCODE_S]) player->y += player->speed;
+    if (keystates[SDL_SCANCODE_A]) player->x -= player->speed;
+    if (keystates[SDL_SCANCODE_D]) player->x += player->speed;
 
-	if (player.x < SIZE_DEFAULT / 2) player.x = SIZE_DEFAULT / 2;
-	if (player.y < SIZE_DEFAULT / 2) player.y = SIZE_DEFAULT / 2;
-	if (player.x > SCREEN_WIDTH - SIZE_DEFAULT / 2) player.x = SCREEN_WIDTH - SIZE_DEFAULT / 2;
-	if (player.y > SCREEN_HEIGHT - SIZE_DEFAULT / 2) player.y = SCREEN_HEIGHT - SIZE_DEFAULT / 2;
+	if (player->x < SIZE_DEFAULT / 2) player->x = SIZE_DEFAULT / 2;
+	if (player->y < SIZE_DEFAULT / 2) player->y = SIZE_DEFAULT / 2;
+	if (player->x > SCREEN_WIDTH - SIZE_DEFAULT / 2) player->x = SCREEN_WIDTH - SIZE_DEFAULT / 2;
+	if (player->y > SCREEN_HEIGHT - SIZE_DEFAULT / 2) player->y = SCREEN_HEIGHT - SIZE_DEFAULT / 2;
 }
 
 void Render() {
@@ -43,13 +44,10 @@ void Render() {
 	SDL_RenderClear(gRenderer);
 	
 	//player
-
-	SDL_Rect playerLoc = { player.x - SIZE_DEFAULT / 2, player.y - SIZE_DEFAULT / 2, SIZE_DEFAULT, SIZE_DEFAULT };
-	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
-	SDL_RenderFillRect(gRenderer, &playerLoc);
-
+	Player_Draw(gRenderer);
     Laser_Draw(gRenderer);
 	Rock_Draw(gRenderer);
+	Bomb_Draw(gRenderer);
 
 	SDL_RenderPresent(gRenderer);
 }
@@ -70,14 +68,13 @@ int main(int argc, char* argv[]) {
 
     LoadMedia();
 
-	player.x = MIDDLE_X;
-	player.y = MIDDLE_Y;
-	player.speed = SPEED_DEFAULT;
+	Player_Init();
 
     while (running) {
         ProcessEvent();
         Laser_Run();
 		Rock_Run();
+		Bomb_Run();
         Render();
         SDL_Delay(10);
     }

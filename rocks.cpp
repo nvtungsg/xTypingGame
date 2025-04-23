@@ -11,16 +11,19 @@ int lastRockSpawnTime = SDL_GetTicks();
 
 void Rock_Run() {
     int now = SDL_GetTicks();
-    if (now - lastRockSpawnTime > 2000) {
-        lastRockSpawnTime = now;
-        Rock rock;
+	if (now - lastRockSpawnTime > 2000) {
+		float chance = rand() % 100;
+		lastRockSpawnTime = now;
+		if (chance > 20) {
+			Rock rock;
 
-		rock.size = max(25, rand() % 40);
-		rock.speed = 10;
-		rock.x = rand() % (SCREEN_WIDTH - rock.size);
-		rock.y = rand() % 50;
-        rocks.push_back(rock);
-    }
+			rock.size = max(25, rand() % 40);
+			rock.speed = 10;
+			rock.x = rand() % (SCREEN_WIDTH - rock.size);
+			rock.y = rand() % 50;
+			rocks.push_back(rock);
+		}
+	}
 
 
 	for (int i = 0; i < rocks.size(); i++) {

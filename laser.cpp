@@ -2,6 +2,7 @@
 #include "SDL.h"
 #include "constant.h"
 #include <vector>
+#include <player.h>
 
 using namespace std;
 
@@ -12,19 +13,41 @@ int lastSpawnTime = SDL_GetTicks();
 void Laser_Run() {
     int now = SDL_GetTicks();
     if (now - lastSpawnTime > 2000) {
+		float chance = rand() % 100;
         lastSpawnTime = now;
-        Laser laser;
-        laser.width = max(20, rand() % 40);
-        laser.x = rand() % (SCREEN_WIDTH - laser.width);
-        laser.y = rand() % (SCREEN_HEIGHT - laser.width);
-        laser.time = now;
-        laser.huong = rand() % 2;
-        lasers.push_back(laser);
+        if (chance > 40) {
+            Laser laser;
+            laser.width = max(20, rand() % 40);
+            Player* player = GetPlayer();
+            if (Player_IsAtBorder()) {
+                laser.x = player->x;
+                laser.y = player->y;
+            }
+            else {
+
+                SDL_Log("Random laser: %d", rand());
+                bool isNegativeX = rand() % 2;
+                bool isNegativeY = rand() % 2;
+
+                int laserX = rand() % 50;
+                if (isNegativeX) laserX *= -1;
+                int laserY = rand() % 50;
+                if (isNegativeY) laserY *= -1;
+
+                SDL_Log("laserX: %d, laserY: %d", laserX, laserY);
+
+                laser.x = player->x + laserX;
+                laser.y = player->y + laserY;
+            }
+            laser.time = now;
+            laser.huong = rand() % 2;
+            lasers.push_back(laser);
+        }
     }
 
 	for (int i = 0; i < lasers.size(); i++) {
 		Laser* laser = &lasers[i];
-        if (!laser->hasFired && now - laser->time >= 200) {
+        if (!laser->hasFired && now - laser->time >= LASER_WAIT_TIME) {
             laser->hasFired = true;
             laser->fireTime = now;
             continue;
