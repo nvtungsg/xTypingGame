@@ -24,8 +24,11 @@ int main(int argc, char* argv[]) {
 
     while (!quit) {
         while (SDL_PollEvent(&e)) {
-            if (e.type == SDL_QUIT)
-                quit = true;
+            switch(e.type){
+                case SDL_QUIT:
+                    quit = true;
+                break;
+            }
         }
     }
 
