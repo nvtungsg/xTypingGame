@@ -10,6 +10,8 @@ struct Player {
 	int speed;
 
 	int size;
+
+	bool isAlive; // thêm biến isAlive....
 };
 
 void Player_Init();

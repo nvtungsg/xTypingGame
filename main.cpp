@@ -6,7 +6,7 @@
 #include "player.h"
 #include "laser.h"
 #include "rocks.h"
-#include <bomb.h>
+#include "bomb.h"
 
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
@@ -26,7 +26,7 @@ void ProcessEvent() {
     }
 
     const Uint8* keystates = SDL_GetKeyboardState(NULL);
-	
+
 	Player* player = GetPlayer();
     if (keystates[SDL_SCANCODE_W]) player->y -= player->speed;
     if (keystates[SDL_SCANCODE_S]) player->y += player->speed;
@@ -42,7 +42,7 @@ void ProcessEvent() {
 void Render() {
 	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
 	SDL_RenderClear(gRenderer);
-	
+
 	//player
 	Player_Draw(gRenderer);
     Laser_Draw(gRenderer);
@@ -70,7 +70,8 @@ int main(int argc, char* argv[]) {
 
 	Player_Init();
 
-    while (running) {
+	Player* player = GetPlayer();
+    while (running && player->isAlive) {
         ProcessEvent();
         Laser_Run();
 		Rock_Run();

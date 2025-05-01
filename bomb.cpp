@@ -51,6 +51,7 @@ void Bomb_Run() {
 			Player* player = GetPlayer();
             if (Player_IsColliedWith(bomb)) {
                 SDL_Log("bi bom danh ne hihi");
+                player ->isAlive = false;
             }
             bomb->hasExploded = true;
             bomb->explodedTime = now;
