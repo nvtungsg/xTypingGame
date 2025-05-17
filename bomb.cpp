@@ -49,7 +49,7 @@ void Bomb_Run() {
 		Bomb* bomb = &bombs[i];
         if (!bomb->hasExploded && now - bomb->time >= BOMB_WAIT_TIME) {
 			Player* player = GetPlayer();
-            if (Player_IsColliedWith(bomb)) {
+            if (Player_IsCollidedWithBom(bomb)) {
                 SDL_Log("bi bom danh ne hihi");
                 player ->isAlive = false;
             }
