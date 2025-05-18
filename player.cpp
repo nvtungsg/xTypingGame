@@ -14,7 +14,7 @@ Player player;
 void Player_Init() {
     player.x = SCREEN_WIDTH / 2;
     player.y = SCREEN_HEIGHT / 2;
-    player.speed = 5;
+    player.speed = 7.5;
     player.size = SIZE_DEFAULT;
     player.isAlive = true; // người chơi bắt đầu còn sống
 }
