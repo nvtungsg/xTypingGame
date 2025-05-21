@@ -6,10 +6,10 @@ const int SCREEN_HEIGHT = 720;
 const int MIDDLE_X = SCREEN_WIDTH / 2;
 const int MIDDLE_Y = SCREEN_HEIGHT / 2;
 
-const int SPEED_DEFAULT = 10;
-const int SIZE_DEFAULT = 100;
+const int SPEED_DEFAULT = 7;
+const int SIZE_DEFAULT = 80;
 
-const int LASER_WAIT_TIME = 600;
+const int LASER_WAIT_TIME = 1000;
 const int LASER_DURATION = 300;
 const int LASER_FADE_TIME = 500;
 

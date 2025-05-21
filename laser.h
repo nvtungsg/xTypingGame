@@ -2,7 +2,6 @@
 
 #include "SDL.h"
 
-
 struct Laser {
 	int x, y;
 	int huong;
@@ -14,3 +13,4 @@ struct Laser {
 
 void Laser_Run();
 void Laser_Draw(SDL_Renderer* renderer);
+void Laser_Reset();

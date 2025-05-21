@@ -1,6 +1,8 @@
 #include "bomb.h"
+#include "menu.h"
 #include "SDL.h"
 #include "SDL_image.h"
+#include "sound.h"         // Thêm dòng này để gọi âm thanh
 #include "constant.h"
 #include "player.h"
 #include <vector>
@@ -32,13 +34,13 @@ bool Bomb_LoadTextures(SDL_Renderer* renderer) {
 
 void Bomb_Run() {
     int now = SDL_GetTicks();
-    if (now - lastBombSpawnTime > 2000) {
+    if (now - lastBombSpawnTime > 5000) {
         float chance = rand() % 100;
         lastBombSpawnTime = now;
         if (chance > 40) {
             Bomb bomb;
             bomb.radius = 60;
-            bomb.explosionRadius = bomb.radius * 4;
+            bomb.explosionRadius = bomb.radius * 3;
             Player* player = GetPlayer();
 
             if (Player_IsAtBorder()) {
@@ -68,6 +70,12 @@ void Bomb_Run() {
                 SDL_Log("Player bị bom đánh!");
                 player->isAlive = false;
             }
+
+            // Thêm hiệu ứng âm thanh nổ
+            if (bombExplosionSound != nullptr) {
+                Mix_PlayChannel(-1, bombExplosionSound, 0);
+            }
+
             bomb->hasExploded = true;
             bomb->explodedTime = now;
         }
@@ -102,4 +110,8 @@ void Bomb_Draw(SDL_Renderer* renderer) {
             }
         }
     }
+}
+
+void Bomb_Reset() {
+    bombs.clear(); // nếu dùng vector
 }

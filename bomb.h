@@ -17,10 +17,9 @@ struct Bomb {
 
 void Bomb_Run();
 void Bomb_Draw(SDL_Renderer* renderer);
-
+void Bomb_Reset();
 bool Bomb_LoadTextures(SDL_Renderer* renderer);
 extern SDL_Texture* bombImage;
 extern SDL_Texture* explosionImage;
 
 #endif
-

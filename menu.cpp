@@ -70,6 +70,7 @@ bool Menu_LoadBackground(const char* filepath) {
     return true;
 }
 
+
 void Menu_Init(SDL_Renderer* renderer) {
     gRenderer = renderer;
 
@@ -199,7 +200,7 @@ void Menu_Render() {
         SDL_DestroyTexture(tex);
 
         // Options
-        tex = CreateTextTexture("Options", normalColor, rect, hoverOptions ? gFontBold : gFontNormal);
+        tex = CreateTextTexture("Controls", normalColor, rect, hoverOptions ? gFontBold : gFontNormal);
         rect.x = optionsRect.x + (optionsRect.w - rect.w) / 2;
         rect.y = optionsRect.y + (optionsRect.h - rect.h) / 2;
         if (hoverOptions) {

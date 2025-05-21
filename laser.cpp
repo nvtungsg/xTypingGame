@@ -1,26 +1,27 @@
-﻿#include "laser.h"
+#include "laser.h"
 #include "SDL.h"
+#include "sound.h"
 #include "constant.h"
 #include <vector>
 #include "player.h"
-#include <cstdlib>
-
+#include <cstdlib> // rand()
+#include <SDL_mixer.h>
 using namespace std;
 
 vector<Laser> lasers;
 int lastSpawnTime = SDL_GetTicks();
 
+int laserSoundChannel = -1;
 void Laser_Run() {
     int now = SDL_GetTicks();
 
-    // Tạo laser mới mỗi 2 giây
-    if (now - lastSpawnTime > LASER_WAIT_TIME) {
+    if (now - lastSpawnTime > 2000 ){
         float chance = rand() % 100;
         lastSpawnTime = now;
 
         if (chance > 40) {
             Laser laser;
-            laser.width = 50;
+            laser.width = 30;
             Player* player = GetPlayer();
 
             if (Player_IsAtBorder()) {
@@ -53,6 +54,17 @@ void Laser_Run() {
         if (!laser->hasFired && now - laser->time >= LASER_WAIT_TIME) {
             laser->hasFired = true;
             laser->fireTime = now;
+             playLaserSound();  // Trả về channel đang phát âm thanh laser
+
+            // Dùng timer để dừng âm thanh laser sau 300ms
+            if (laserSoundChannel != -1) {
+                SDL_AddTimer(300, [](Uint32 interval, void* param) -> Uint32 {
+                    int channel = *(int*)param;
+                    Mix_HaltChannel(channel);
+                    delete (int*)param;
+                    return 0;
+                }, new int(laserSoundChannel));
+            }
 
             // Kiểm tra va chạm với người chơi
             Player* player = GetPlayer();
@@ -120,34 +132,40 @@ void Laser_Draw(SDL_Renderer* renderer) {
         } else {
             if (now - laser.fireTime < LASER_DURATION) {
                 // Glow layer 1 (bên ngoài, mờ) - xanh dương nhạt
-                SDL_SetRenderDrawColor(renderer, 100, 149, 237, 50);  // cornflower blue, alpha thấp
+                SDL_SetRenderDrawColor(renderer, 255, 69, 0, 50);  // cornflower blue, alpha thấp
                 SDL_Rect glowRect = laserRect;
                 glowRect.x -= 6; glowRect.w += 12;
                 glowRect.y -= 6; glowRect.h += 12;
                 SDL_RenderFillRect(renderer, &glowRect);
 
                 // Glow layer 2 (gần giữa, sáng hơn) - xanh dương đậm hơn
-                SDL_SetRenderDrawColor(renderer, 30, 144, 255, 150); // dodger blue
+                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 150); // dodger blue
                 glowRect = laserRect;
                 glowRect.x -= 3; glowRect.w += 6;
                 glowRect.y -= 3; glowRect.h += 6;
                 SDL_RenderFillRect(renderer, &glowRect);
 
                 // Core laser (giữa, sắc nét) - xanh dương sáng
-                SDL_SetRenderDrawColor(renderer, 0, 191, 255, 255); // deep sky blue
+                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // deep sky blue
                 SDL_RenderFillRect(renderer, &laserRect);
 
                 // Vẽ tia điện bên trong laser - xanh dương nhạt, hơi sáng, alpha 180
-                SDL_SetRenderDrawColor(renderer, 173, 216, 230, 180); // light blue
+                SDL_SetRenderDrawColor(renderer, 255, 200, 200, 255); // trắng đậm, không trong suốt
                 DrawElectricEffect(renderer, laserRect);
+
             } else {
                 int fadingTime = now - laser.fireTime - LASER_DURATION;
                 int alpha = 255 - ((float)fadingTime / LASER_FADE_TIME * 255);
                 if (alpha < 0) alpha = 0;
 
-                SDL_SetRenderDrawColor(renderer, 0, 191, 255, alpha);
+                SDL_SetRenderDrawColor(renderer, 255, 0, 0, alpha);
                 SDL_RenderFillRect(renderer, &laserRect);
             }
         }
     }
 }
+
+void Laser_Reset() {
+    lasers.clear(); // nếu dùng vector
+}
+
